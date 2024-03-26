@@ -1,0 +1,24 @@
+version: '3.9'
+
+services:
+  api_dev:
+    build:
+      context: ./api
+      target: dev
+      args:
+        - UID=${UID}
+        - GID=${GID}
+        - USER=${USER}
+    user: "${UID}:${GID}"
+    container_name: api_dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./api:${HOME}/app
+      - /etc/group:/etc/group:ro
+      - /etc/passwd:/etc/passwd:ro
+      - $SSH_AUTH_SOCK:/ssh-agent
+    environment:
+      SSH_AUTH_SOCK: /ssh-agent
+    working_dir: ${HOME}/app
+    tty: true
