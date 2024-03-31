@@ -2,4 +2,4 @@
 
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_rsa
-docker compose build
+docker compose build web_dev

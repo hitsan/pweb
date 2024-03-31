@@ -12,7 +12,7 @@ services:
     user: "${UID}:${GID}"
     container_name: api_dev
     ports:
-      - "8080:8080"
+      - "0.0.0.0:8080:8080"
     volumes:
       - ./api:${HOME}/app
       - /etc/group:/etc/group:ro
@@ -22,3 +22,25 @@ services:
       SSH_AUTH_SOCK: /ssh-agent
     working_dir: ${HOME}/app
     tty: true
+
+  web_dev:
+    build:
+      context: ./web
+      target: dev
+      args:
+        - UID=${UID}
+        - GID=${GID}
+        - USER=${USER}
+    user: "${UID}:${GID}"
+    container_name: web_dev
+    ports:
+      - "0.0.0.0:3000:3000"
+    volumes:
+      - ./web:${HOME}/app
+      - /etc/group:/etc/group:ro
+      - /etc/passwd:/etc/passwd:ro
+      - $SSH_AUTH_SOCK:/ssh-agent
+    environment:
+      SSH_AUTH_SOCK: /ssh-agent
+    working_dir: ${HOME}/app
+    tty: true  

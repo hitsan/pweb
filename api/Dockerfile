@@ -12,7 +12,6 @@ RUN groupadd -g ${GID} ${USER} \
  && chown -R ${USER}:${USER} /home/${USER}
 RUN apt-get -y update \
  && apt-get -y --no-install-recommends install \
-    default-jre \
     git \
     ssh \
  && apt-get clean \
@@ -28,4 +27,4 @@ RUN npm ci \
 
 FROM node:20.11-buster-slim AS production
 COPY --from=build /work/build /api
-CMD ["node", "main.js"]
+CMD ["node", "index.js"]
