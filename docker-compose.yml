@@ -58,20 +58,3 @@ services:
       MARIADB_USER: ${USER}
       MARIADB_PASSWORD: ${MARIADB_PASSWORD}
       TZ: 'Asia/Tokyo'
-
-  dbeaver:
-    build:
-      target: dbeaver
-      context: ./db
-    container_name: dbeaver
-    depends_on:
-      - db_dev
-    environment:
-      - DBEAVER_USER=${USER}
-      - DBEAVER_PASSWORD=${MARIADB_PASSWORD}
-      - DBEAVER_HOST=db_dev
-      - DBEAVER_PORT=3306
-      - DBEAVER_DATABASE=pweb
-      - TZ=Asia/Tokyo
-    ports:
-      - "8978:8978"
