@@ -43,4 +43,18 @@ services:
     environment:
       SSH_AUTH_SOCK: /ssh-agent
     working_dir: ${HOME}/app
-    tty: true  
+    tty: true
+
+  db_dev:
+    build:
+      context: ./db
+      target: db
+    container_name: db_dev
+    ports:
+      - "0.0.0.0:3306:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: pweb
+      MARIADB_USER: ${USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      TZ: 'Asia/Tokyo'
