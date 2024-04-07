@@ -17,7 +17,6 @@ services:
       - "0.0.0.0:8080:8080"
     volumes:
       - ./api:${HOME}/api
-      - ./.git:${HOME}/.git
       - /etc/group:/etc/group:ro
       - /etc/passwd:/etc/passwd:ro
       - $SSH_AUTH_SOCK:/ssh-agent
@@ -40,7 +39,6 @@ services:
       - "0.0.0.0:3000:3000"
     volumes:
       - ./web:${HOME}/web
-      - ./.git:${HOME}/.git
       - /etc/group:/etc/group:ro
       - /etc/passwd:/etc/passwd:ro
       - $SSH_AUTH_SOCK:/ssh-agent
