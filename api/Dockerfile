@@ -1,37 +1,38 @@
 FROM ubuntu:20.04 AS install
+ARG COURSIER_VERSION
 ARG SCALA_VERSION
 ARG MILL_VERSION
-ADD https://github.com/lampepfl/dotty/releases/download/${SCALA_VERSION}/scala3-${SCALA_VERSION}.zip scala3-${SCALA_VERSION}.zip
-ADD https://github.com/com-lihaoyi/mill/releases/download/${MILL_VERSION}/${MILL_VERSION} mill
 RUN apt-get update \
  && apt-get install -y \
-    unzip \
+    curl \
+    gzip \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
-RUN unzip scala3-${SCALA_VERSION}.zip \
- && mv scala3-${SCALA_VERSION} scala
-RUN chmod 777 mill
+RUN curl -fL https://github.com/coursier/coursier/releases/download/v${COURSIER_VERSION}/cs-x86_64-pc-linux.gz | gzip -d > cs
+RUN chmod +x cs
+RUN ./cs install scala:${SCALA_VERSION} scalac:${SCALA_VERSION} mill:${MILL_VERSION}
 
-FROM openjdk:11.0.10-slim AS user
+FROM openjdk:11.0.10-slim AS dev
 ARG UID
 ARG GID
 ARG USER
+ENV PATH="/home/${USER}/.local/share/coursier/bin:${PATH}"
 RUN groupadd -g ${GID} ${USER} \
  && useradd -u ${UID} -g ${GID} -m ${USER} \
  && mkdir -p /home/${USER}/.ssh \
  && chown -R ${USER}:${USER} /home/${USER}
+COPY --from=install --chown=${USER}:${USER} cs /usr/local/bin/cs
+COPY --from=install --chown=${USER}:${USER} /root/.local /home/${USER}/.local
 RUN apt-get -y update \
  && apt-get -y --no-install-recommends install \
-    curl \
-    git \
-    ssh \
+    build-essential \
+    libz-dev \
+    zlib1g-dev \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
+# git and ssh are not installed
 USER ${USER}
-RUN ssh-keyscan github.com >> /home/${USER}/.ssh/known_hosts
-
-FROM user AS dev
-COPY --from=install mill /usr/local/bin/mill
-COPY --from=install scala /usr/local/bin/scala
-ENV PATH $PATH:/usr/local/bin/scala/bin
-RUN mill --version
+# RUN ssh-keyscan github.com >> /home/${USER}/.ssh/known_hosts
+RUN mill --version \
+ && scala -version \
+ && scalac -version
