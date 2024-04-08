@@ -45,7 +45,7 @@ services:
       - $SSH_AUTH_SOCK:/ssh-agent
     environment:
       SSH_AUTH_SOCK: /ssh-agent
-    working_dir: ${HOME}/app
+    working_dir: ${HOME}
     tty: true
 
   db_dev:

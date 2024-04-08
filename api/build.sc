@@ -4,7 +4,10 @@ import io.github.alexarchambault.millnativeimage.NativeImage
 
 object api extends ScalaModule with NativeImage {
   def scalaVersion = "3.4.0"
-
+  def ivyDeps = Agg(
+    ivy"dev.zio::zio:2.0.13",
+    ivy"dev.zio::zio-http:3.0.0-RC1",
+  )
   def nativeImageName         = "api"
   def nativeImageMainClass    = "Main"
   def nativeImageClassPath    = runClasspath()
@@ -14,6 +17,4 @@ object api extends ScalaModule with NativeImage {
     "--enable-url-protocols=http,https",
     "-Djdk.http.auth.tunneling.disabledSchemes=",
   ) ++ (if (sys.props.get("os.name").contains("Linux")) Seq("--static") else Seq.empty)
-
-  def mainClass = Some("Main")
 }
