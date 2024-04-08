@@ -5,8 +5,8 @@ import io.github.alexarchambault.millnativeimage.NativeImage
 object api extends ScalaModule with NativeImage {
   def scalaVersion = "3.4.0"
   def ivyDeps = Agg(
-    ivy"dev.zio::zio:2.0.13",
-    ivy"dev.zio::zio-http:3.0.0-RC1",
+    ivy"dev.zio::zio:2.1-RC1",
+    ivy"dev.zio::zio-http:3.0.0-RC6",
   )
   def nativeImageName         = "api"
   def nativeImageMainClass    = "Main"
