@@ -9,18 +9,21 @@ services:
         - UID=${UID}
         - GID=${GID}
         - USER=${USER}
+        - SCALA_VERSION=3.4.0
+        - MILL_VERSION=0.11.7
+        - COURSIER_VERSION=2.1.9
     user: "${UID}:${GID}"
     container_name: api_dev
     ports:
       - "0.0.0.0:8080:8080"
     volumes:
-      - ./api:${HOME}/app
+      - ./api:${HOME}/api
       - /etc/group:/etc/group:ro
       - /etc/passwd:/etc/passwd:ro
-      - $SSH_AUTH_SOCK:/ssh-agent
-    environment:
-      SSH_AUTH_SOCK: /ssh-agent
-    working_dir: ${HOME}/app
+    #   - $SSH_AUTH_SOCK:/ssh-agent
+    # environment:
+    #   SSH_AUTH_SOCK: /ssh-agent
+    working_dir: ${HOME}
     tty: true
 
   web_dev:
@@ -36,13 +39,13 @@ services:
     ports:
       - "0.0.0.0:3000:3000"
     volumes:
-      - ./web:${HOME}/app
+      - ./web:${HOME}/web
       - /etc/group:/etc/group:ro
       - /etc/passwd:/etc/passwd:ro
       - $SSH_AUTH_SOCK:/ssh-agent
     environment:
       SSH_AUTH_SOCK: /ssh-agent
-    working_dir: ${HOME}/app
+    working_dir: ${HOME}
     tty: true
 
   db_dev:

@@ -1,1 +1,10 @@
 .env
+.cache
+.java
+.ssh
+.vscode-server
+.bash_history
+.bash_logout
+.bashrc
+.gitconfig
+.profile
