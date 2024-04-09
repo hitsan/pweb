@@ -2,8 +2,8 @@ import zio.ZIOAppDefault
 import zio.http._
 
 object Main extends ZIOAppDefault:
-  val app =
-    Routes(
-      Method.GET / "todo" -> Handler.text("Welcome to JSON APIs!")
-    ).toHttpApp
+  val todo = Routes(Method.GET / "todo" -> Handler.text("todo!"))
+  val done = Routes(Method.GET / "done" -> Handler.text("done!"))
+  val done = Routes(Method.GET / "done/list" -> Handler.text("done!"))
+  val app = (todo ++ done).toHttpApp
   def run = Server.serve(app).provide(Server.defaultWithPort(8080))
