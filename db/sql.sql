@@ -1,5 +1,7 @@
 create database workdb;
 use workdb;
+GRANT ALL PRIVILEGES ON workdb.* TO 'hitsan'@'%';
+FLUSH PRIVILEGES;
 CREATE TABLE Works (
     dt DATE NOT NULL,
     task VARCHAR(255) NOT NULL,
@@ -10,5 +12,7 @@ CREATE TABLE Works (
 );
 CREATE TABLE Categry (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    categry CHAR(8) NOT NULL
+    categry CHAR(30) NOT NULL
 );
+INSERT INTO Categry(categry)
+VALUES ('meeting'), ('development'), ('testing'), ('document'), ('other');
