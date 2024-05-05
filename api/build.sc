@@ -7,6 +7,9 @@ object api extends ScalaModule with NativeImage {
   def ivyDeps = Agg(
     ivy"dev.zio::zio:2.1-RC1",
     ivy"dev.zio::zio-http:3.0.0-RC6",
+    ivy"com.google.api-client:google-api-client:2.0.0",
+    ivy"com.google.oauth-client:google-oauth-client-jetty:1.34.1",
+    ivy"com.google.apis:google-api-services-calendar:v3-rev20220715-2.0.0"
   )
   def nativeImageName         = "api"
   def nativeImageMainClass    = "Main"
