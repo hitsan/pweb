@@ -19,7 +19,7 @@ object Main:
     val transport = GoogleNetHttpTransport.newTrustedTransport()
     val jsonFactory = GsonFactory.getDefaultInstance()
     val calenar = Calendar.Builder(transport, jsonFactory, credential)
-      .setApplicationName("pweb")
+      .setApplicationName(appName)
       .build()
     return calenar
   }
