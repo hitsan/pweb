@@ -3,15 +3,17 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.CalendarScopes
-import com.google.api.client.util.DateTime
-import com.google.api.services.calendar.model.Events
+import com.google.api.services.calendar.model.Event
 import com.google.api.client.util.DateTime
 
+import scala.collection.mutable.Buffer
+
+import collection.JavaConverters._
 import java.io.FileInputStream
 import java.util.Collections
 
-object MyCalendar {
-  def buildCalendarService(appName:String, credential: String => GoogleCredential): Calendar = {
+object CalendarService {
+  def build(appName:String, credential: String => GoogleCredential): Calendar = {
     val transport = GoogleNetHttpTransport.newTrustedTransport()
     val jsonFactory = GsonFactory.getDefaultInstance()
     val scope = CalendarScopes.CALENDAR_EVENTS_READONLY
@@ -21,9 +23,19 @@ object MyCalendar {
     return calendar
   }
   def getTerm(start: String, end: String): Term = {
-    val startDate = new DateTime(start)
-    val endDate = new DateTime(end)
+    val time = "T00:00:00.000Z"
+    val startDate = new DateTime(start+time)
+    val endDate = new DateTime(end+time)
     return Term(startDate, endDate)
+  }
+  def featchEvents(calendar: Calendar, calendarId: String, term: Term): List[Event] = {
+      val events = calendar.events().list(calendarId)
+        .setTimeZone("Asia/Tokyo")
+        .setTimeMin(term.start)
+        .setTimeMax(term.end)
+        .setMaxResults(1)
+        .execute()
+      return events.getItems().asScala.toList
   }
 }
 
@@ -32,18 +44,7 @@ case class Term(
   end: DateTime,
 )
 
-extension (calendar: Calendar)
-  def featchEvents(calendarId: String, term: Term): Events = {
-      val events = calendar.events().list(calendarId)
-        .setTimeZone("Asia/Tokyo")
-        .setTimeMin(term.start)
-        .setTimeMax(term.end)
-        .setMaxResults(20)
-        .execute()
-      return events
-  }
-
-object MyCredential:
+object UserCredential:
   def createCredential(accessTokenPath: String)(scope: String): GoogleCredential = {
     val credential = GoogleCredential
       .fromStream(new FileInputStream(accessTokenPath))
