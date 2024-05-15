@@ -1,6 +1,6 @@
 import com.google.api.services.calendar.CalendarScopes
 import CalendarService._
-import UserCredential._
+// import UserCredential._
 import Env._
 
 object Main:
