@@ -13,14 +13,20 @@ import java.io.FileInputStream
 import java.util.Collections
 
 object CalendarService {
-  def build(appName:String, credential: String => GoogleCredential): Calendar = {
+  def build(appName:String, credential: GoogleCredential): Calendar = {
     val transport = GoogleNetHttpTransport.newTrustedTransport()
     val jsonFactory = GsonFactory.getDefaultInstance()
-    val scope = CalendarScopes.CALENDAR_EVENTS_READONLY
-    val calendar = Calendar.Builder(transport, jsonFactory, credential(scope))
+    val calendar = Calendar.Builder(transport, jsonFactory, credential)
       .setApplicationName(appName)
       .build()
     return calendar
+  }
+  def createCredential(accessTokenPath: String): GoogleCredential = {
+    val scope = CalendarScopes.CALENDAR_EVENTS_READONLY
+    val credential = GoogleCredential
+      .fromStream(new FileInputStream(accessTokenPath))
+      .createScoped(Collections.singletonList(scope))
+    return credential
   }
   def getTerm(start: String, end: String): Term = {
     val time = "T00:00:00.000Z"
@@ -29,13 +35,14 @@ object CalendarService {
     return Term(startDate, endDate)
   }
   def featchEvents(calendar: Calendar, calendarId: String, term: Term): List[Event] = {
-      val events = calendar.events().list(calendarId)
-        .setTimeZone("Asia/Tokyo")
-        .setTimeMin(term.start)
-        .setTimeMax(term.end)
-        .setMaxResults(1)
-        .execute()
-      return events.getItems().asScala.toList
+    val events = calendar.events()
+      .list(calendarId)
+      .setTimeZone("Asia/Tokyo")
+      .setTimeMin(term.start)
+      .setTimeMax(term.end)
+      .setMaxResults(10)
+      .execute()
+    return events.getItems().asScala.toList
   }
 }
 
@@ -43,11 +50,3 @@ case class Term(
   start: DateTime,
   end: DateTime,
 )
-
-object UserCredential:
-  def createCredential(accessTokenPath: String)(scope: String): GoogleCredential = {
-    val credential = GoogleCredential
-      .fromStream(new FileInputStream(accessTokenPath))
-      .createScoped(Collections.singletonList(scope))
-    return credential
-  }
